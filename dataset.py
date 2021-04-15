@@ -1,75 +1,55 @@
+from os import listdir
+from numpy import asarray
+from numpy import save
 import tensorflow as tf
-import tensorflow_datasets as tfds
-import os
-import matplotlib.pyplot as plt
-import pickle
-import os
 
-if not os.path.exists('processed_dataset/'):
-    os.makedirs('processed_dataset/train')
-    os.makedirs('processed_dataset/test')
-    os.makedirs('processed_dataset/valid')
+path = "Dataset/train/"
 
+images, labels = list(), list()
 
-#set up new empty list
-temp_image = []
-temp_label = []
-batch_size = 1
+for file in listdir(path) :
+    out_class = 1.0 # Dog
+    if file.startswith("cat") :
+        out_class = 0.0
 
+    #load image and resize
+    #224x224 to simplify, if we use VGG16.
+    image = tf.keras.preprocessing.image.load_img((path + file), target_size=(224,224))
+    image = tf.keras.preprocessing.image.img_to_array(image)
 
-dataset_name = 'cats_vs_dogs'
-output_label = ['cat', 'dog']
-ds_raw = tfds.load(
-    name=dataset_name,
-    split = 'train',
-    with_info =False,
-    shuffle_files=False)
+    images.append(image)
+    labels.append(out_class)
+images = asarray(images)
+labels = asarray(labels)
 
-ds_raw = ds_raw.take(6000)
+print(images.shape, labels.shape)
 
-#resize all the images to fit our model
-for ele in ds_raw :
-    image = tf.image.resize(ele['image'], [300, 300], method='bilinear', antialias=False)
-    temp_image.append(image)
-    temp_label.append(ele['label'])
+save("Dataset/train/dogs_vs_cats_images_train.npy", images)
+save("Dataset/train/dogs_vs_cats_labels_train.npy", labels)
 
-#turn temps into datasets
-d1 = tf.data.Dataset.from_tensors(temp_image[:])
-d2 = tf.data.Dataset.from_tensors(temp_label[:])
+path = "Dataset/test/"
 
-#merge dataset
-merge_ds = tf.data.Dataset.zip((d1,d2))
+images, labels = list(), list()
 
-#Because of temp variables, the tensors are batched into one single batch. so we need to unbatch first
-merge_ds = merge_ds.unbatch()
+for file in listdir(path) :
+    id = file.replace(".jpg", "")
 
-#now we divide the datasets and batch accordingly
-train = merge_ds.take(4000)
-valid = train.skip(3000)
-train = train.take(3000)
-test = merge_ds.skip(4000)
+    #load image and resize
+    #224x224 to simplify, if we use VGG16.
+    image = tf.keras.preprocessing.image.load_img((path + file), target_size=(224,224))
+    image = tf.keras.preprocessing.image.img_to_array(image)
 
-#shuffle to ensure randomness
-train = train.shuffle(len(train))
-valid = valid.shuffle(len(valid))
-test = test.shuffle(len(test))
+    images.append(image)
+    labels.append(id)
+images = asarray(images)
+labels = asarray(labels)
 
-# plt.figure(figsize=(10,10))
-#
-# i = 1
-# for ele in out_2 :
-#     plt.subplot(5, 5, i+5)
-#     plt.xticks([])
-#     plt.yticks([])
-#     plt.grid(False)
-#     plt.imshow(ele[0] / 255)
-#     i+=1
-# plt.show()
+print(images.shape, labels.shape)
+
+save("Dataset/test/dogs_vs_cats_images_test.npy", images)
+save("Dataset/test/dogs_vs_cats_labels_test.npy", labels)
 
 
-tf.data.experimental.save(train, "processed_dataset/train/", compression="GZIP")
-tf.data.experimental.save(valid, "processed_dataset/valid/", compression="GZIP")
-tf.data.experimental.save(test, "processed_dataset/test/", compression="GZIP")
 
 
 
