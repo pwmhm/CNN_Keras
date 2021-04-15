@@ -1,10 +1,10 @@
 # CNN_Keras
 Implementation of Keras API (Tensorflow 2.4.1) to classify images of dogs and cats
 
-Dependencies :
--SKLearn train-test-split
--Tensorflow 2.4.1
--CSV
+# Dependencies : <br/>
+- SKLearn train-test-split
+- Tensorflow 2.4.1
+- CSV
 
 # Getting started
 Before using this project, make sure you have your dataset images downloaded and stored in 
