@@ -33,4 +33,7 @@ best accuracy, and on testing it will load the previously saved model.
 # Unlabeled testing (Predicting)
 After training, you might want to test the model on unlabeled data. You can do this by running test.py, 
 but make sure you rename the model_name to your desired model. The script will test all images already processed
-by Dataset.py stored on /Dataset/test so, but only shows 49 images to analyze.
+by Dataset.py stored on /Dataset/test so, but only shows 49 images to analyze. <br/>
+
+Test.py will save all predictions on a csv file after running. This csv file can be used in Display.py to manually check whether 
+the labels are correct. This is the same function in test.py, but without loading the dataset, so it saves time.
