@@ -9,10 +9,10 @@ images = load("Dataset/train/dogs_vs_cats_images_train.npy")
 labels = load("Dataset/train/dogs_vs_cats_labels_train.npy")
 
 xtv, xtest, ytv, ytest = train_test_split(images,labels, test_size=0.2, shuffle=True)
-xtrain, xval, ytrain, yval = train_test_split(images,labels, test_size=0.2, shuffle=True)
+xtrain, xval, ytrain, yval = train_test_split(xtv,ytv, test_size=0.2, shuffle=True)
 
 learning_rate = 1e-3   #standard learning rate2
-epochs        = 20    #massive data
+epochs        = 100    #massive data
 batch_size    = 64
 dropout_rate  = 0.5
 
@@ -24,25 +24,33 @@ model = Sequential([
  layers.Conv2D(16, (3,3), padding = "same", kernel_initializer="he_uniform", activation="relu"),
  layers.MaxPooling2D(2, 2),
 
- layers.Dropout(0.2),
+ layers.Dropout(0.1),
 
  layers.Conv2D(32, (3,3), padding="same", kernel_initializer="he_uniform", activation="relu"),
  layers.MaxPooling2D(2, 2),
 
- # layers.Conv2D(32, (3, 3), padding="same", kernel_initializer="he_uniform", activation="relu"),
- # layers.MaxPooling2D(2, 2),
+ layers.Dropout(0.1),
 
- layers.Dropout(dropout_rate),
+ layers.Conv2D(64, (3, 3), padding="same", kernel_initializer="he_uniform", activation="relu"),
+ layers.MaxPooling2D(2, 2),
+
+ layers.Dropout(0.3),
 
  layers.Flatten(),
 
- layers.Dense(128, activation="relu", kernel_initializer="he_uniform"),
+ layers.Dense(64, activation="relu", kernel_initializer="he_uniform"),
+
+ layers.BatchNormalization(),
 
  layers.Dense(num_classes, activation="sigmoid")
 
 ])
 
+model.summary()
+
 MCheck = tf.keras.callbacks.ModelCheckpoint('The_Model.h5', monitor="val_accuracy", verbose=1, save_best_only=True)
+
+EDrop = tf.keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=16, mode="max", min_delta=0.0001)
 
 opt = tf.keras.optimizers.SGD(lr=learning_rate, momentum=0.9)
 
@@ -57,7 +65,7 @@ history = model.fit(
   validation_data=(xval,yval),
   batch_size=batch_size,
   epochs=epochs,
-  callbacks=MCheck
+  callbacks=[MCheck, EDrop]
 )
 
 eval_model = tf.keras.models.load_model('The_Model.h5')
