@@ -34,13 +34,18 @@ model = Sequential([
  layers.Conv2D(64, (3, 3), padding="same", kernel_initializer="he_uniform", activation="relu"),
  layers.MaxPooling2D(2, 2),
 
- layers.Dropout(0.3),
+ layers.Dropout(0.5),
+
+ layers.Conv2D(128, (3, 3), padding="same", kernel_initializer="he_uniform", activation="relu"),
+ layers.MaxPooling2D(2, 2),
+
+ layers.Dropout(0.2),
 
  layers.Flatten(),
 
  layers.Dense(64, activation="relu", kernel_initializer="he_uniform"),
 
- layers.BatchNormalization(),
+ layers.Dropout(0.2),
 
  layers.Dense(num_classes, activation="sigmoid")
 
