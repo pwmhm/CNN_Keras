@@ -17,7 +17,7 @@ If you don't want to bother with all of that, download the dataset here https://
 # Preprocessing the images
 The images on the cats vs dogs dataset are not of the same size, so it is imperative that we first resize the image before
 we do any training at all. We do this by running the dataset.py. Note that this is only need to be run one time.
-***Make sure you have sufficient RAM and HDD space***.
+***Make sure you have sufficient RAM and HDD space, as the algorithm used here is pretty inefficient to avoid changing original image. Usually some preprocessing is done before loading the data, but at the time of creating this project it was not considered***.
 
 # Training the model
 To train the model, go ahead to the main file and run it. Modify the parameters as you see fit.
